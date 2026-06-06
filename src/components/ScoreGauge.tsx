@@ -26,7 +26,7 @@ function arc(cx: number, cy: number, r: number, a1: number, a2: number): string 
 
 const START = -210;
 const END   =   30;
-const SPAN  = END - START; // 240°
+const SPAN  = END - START;
 
 export function ScoreGauge({ score, size = 200, showRating = false, label }: Props) {
   const anim = useRef(new Animated.Value(score)).current;
@@ -53,9 +53,12 @@ export function ScoreGauge({ score, size = 200, showRating = false, label }: Pro
   const ratingColor = getRatingColor(rating as SafetyRating);
   const svgH        = size * 0.72;
 
+  // Arc centre is at cy = size/2 + 10, not the SVG centre.
+  // Nudge the overlay up so score+label sit inside the open arc area.
+  const overlayOffset = -(size * 0.08);
+
   return (
     <View style={{ alignItems: 'center' }}>
-      {/* SVG gauge */}
       <View style={{ width: size, height: svgH }}>
         <Svg width={size} height={svgH}>
           <Path d={trackD} stroke={COLORS.border} strokeWidth={sw} fill="none" strokeLinecap="round" />
@@ -63,12 +66,14 @@ export function ScoreGauge({ score, size = 200, showRating = false, label }: Pro
           <Circle cx={dot.x} cy={dot.y} r={sw * 0.6} fill={scoreColor} />
         </Svg>
 
-        {/* Score number overlay */}
-        <View style={[StyleSheet.absoluteFill, styles.overlay]}>
+        {/* Score overlay — centred on arc centre, not SVG centre */}
+        <View style={[StyleSheet.absoluteFill, styles.overlay, { marginTop: overlayOffset }]}>
           <Text style={[styles.scoreNum, { fontSize: size * 0.27, color: COLORS.textPrimary }]}>
             {score}
           </Text>
-          {label ? <Text style={styles.label}>{label}</Text> : null}
+          {label ? (
+            <Text style={[styles.label, { fontSize: size * 0.075 }]}>{label}</Text>
+          ) : null}
         </View>
       </View>
 
@@ -84,29 +89,29 @@ export function ScoreGauge({ score, size = 200, showRating = false, label }: Pro
 
 const styles = StyleSheet.create({
   overlay: {
-    alignItems: 'center',
+    alignItems:     'center',
     justifyContent: 'center',
-    paddingBottom: 16,
   },
   scoreNum: {
-    fontWeight: '800',
+    fontWeight:    '800',
     letterSpacing: -2,
+    lineHeight:    undefined, // let fontSize drive height
   },
   label: {
-    color:     COLORS.textSecondary,
-    fontSize:  FONTS.small,
-    marginTop: 2,
+    color:      COLORS.textSecondary,
+    marginTop:  2,
+    fontWeight: '500',
   },
   badge: {
-    flexDirection:  'row',
-    alignItems:     'center',
+    flexDirection:     'row',
+    alignItems:        'center',
     paddingHorizontal: 14,
     paddingVertical:    6,
-    borderRadius:   20,
-    borderWidth:     1,
-    marginTop:       8,
-    gap:             6,
+    borderRadius:      20,
+    borderWidth:        1,
+    marginTop:          8,
+    gap:                6,
   },
-  dot: { width: 8, height: 8, borderRadius: 4 },
+  dot:       { width: 8, height: 8, borderRadius: 4 },
   badgeText: { fontSize: FONTS.body, fontWeight: '600' },
 });

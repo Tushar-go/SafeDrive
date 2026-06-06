@@ -1,12 +1,21 @@
 import { Tabs } from 'expo-router';
 import { View, Text, StyleSheet } from 'react-native';
+import {Ionicons} from '@expo/vector-icons';
 import { COLORS, FONTS } from '../../constants/theme';
 
-function TabIcon({ icon, label, focused }: { icon: string; label: string; focused: boolean }) {
+function TabIcon({
+  name,
+  label,
+  focused,
+}: {
+  name: React.ComponentProps<typeof Ionicons>['name'];
+  label: string;
+  focused: boolean;
+}) {
   const color = focused ? COLORS.tabActive : COLORS.tabInactive;
   return (
     <View style={styles.iconWrap}>
-      <Text style={[styles.emoji, { opacity: focused ? 1 : 0.5 }]}>{icon}</Text>
+      <Ionicons name={name} size={22} color={color} />
       <Text style={[styles.label, { color }]}>{label}</Text>
     </View>
   );
@@ -32,21 +41,27 @@ export default function TabsLayout() {
         name="index"
         options={{
           title: 'Home',
-          tabBarIcon: ({ focused }) => <TabIcon icon="⊞" label="Home" focused={focused} />,
+          tabBarIcon: ({ focused }) => (
+            <TabIcon name={focused ? 'home' : 'home-outline'} label="Home" focused={focused} />
+          )
         }}
       />
       <Tabs.Screen
         name="active"
         options={{
           title: 'Active',
-          tabBarIcon: ({ focused }) => <TabIcon icon="○" label="Active" focused={focused} />,
+          tabBarIcon: ({ focused }) => (
+            <TabIcon name={focused ? 'navigate' : 'navigate-outline'} label="Active" focused={focused} />
+          ),
         }}
       />
       <Tabs.Screen
         name="history"
         options={{
           title: 'History',
-          tabBarIcon: ({ focused }) => <TabIcon icon="◷" label="History" focused={focused} />,
+          tabBarIcon: ({ focused }) => (
+            <TabIcon name={focused ? 'time' : 'time-outline'} label="History" focused={focused} />
+          ),
         }}
       />
     </Tabs>
@@ -55,6 +70,5 @@ export default function TabsLayout() {
 
 const styles = StyleSheet.create({
   iconWrap: { alignItems: 'center', gap: 3 },
-  emoji:    { fontSize: 20 },
   label:    { fontSize: FONTS.tiny, fontWeight: '600' },
 });

@@ -8,8 +8,6 @@ No backend · No account · Everything stored in AsyncStorage.
 ## Quick start
 
 ```bash
-unzip SafeDrive.zip
-cd SafeDrive
 npm install
 npx expo start
 ```
